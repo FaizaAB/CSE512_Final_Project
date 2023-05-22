@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scrolling Visualization Project</title>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            min-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Below line for separate background color for each page - optional */
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        h1 {
+            font-size: 5em;
+        }
+      
+        #scroll-nav {
+            position: fixed;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #scroll-nav a {
+            display: block;
+            height: 15px;
+            width: 15px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin: 10px 0;
+            text-decoration: none;  /* to remove underline */
+        }
+
+        #scroll-nav a.active {
+            background-color: #333;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+</head>
+<body>
+    <div id="scroll-nav">
+        <a href="#page1"></a>
+        <a href="#page2"></a>
+        <a href="#page3"></a>
+        <a href="#page4"></a>
+        <a href="#page5"></a>
+        <a href="#page6"></a>
+        <a href="#page7"></a>
+    </div>
+    <div class="page" id="page1">
+        <h1>Page 1</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page2">
+        <h1>Page 2</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page3">
+        <h1>Page 3</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page4">
+        <h1>Page 4</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page5">
+        <h1>Page 5</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page6">
+        <h1>Page 6</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page7">
+        <h1>Job Finder</h1>
+        <div id="form-container">
+            <form>
+                <label for="Occupation">Occupation:</label>
+                <select id="Occupation">
+                    <option value="Data Engineer">Data Engineer</option>
+                    <option value="Data Scientist">Data Scientist</option>
+                    <option value="Data Analitics">Data Analitics</option>
+                    <option value="Analyst">Analyst</option>
+                    <option value="Data Modeler">Data Modeler</option>
+                    <option value="Project Manager">Project Manager</option>
+                    <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+                    <option value="Director">Director</option>
+                    <option value="Other Scientist">Other Scientist</option>
+                    <option value="Other">Other</option>
+                </select>
+    
+                <label for="salary">Salary:</label>
+                <input id="salary" type="range" min="0" max="120" step="0.5" oninput="updateSliderValue()">
+                <p id="slider-value"></p>                
+                <button id="submit-button" type="button" onclick="findJobs()">Find Jobs</button>
+            </form>
+        </div>
+        
+        <div id="results-container">
+                <!-- This is where you will display the results returned from the server -->
+        </div>
+    
+    </div>
+    
+    <script>
+        function updateSliderValue() {
+            var slider = document.getElementById('salary');
+            var output = document.getElementById('slider-value');
+            output.innerHTML = "Selected Average Yearly Salary: $" + parseFloat(slider.value).toFixed(1) + "K";
+        }
+
+        function createTable(jobs) {
+            var table = document.createElement('table');
+            var thead = document.createElement('thead');
+            var headerRow = document.createElement('tr');
+
+            ['Job Title', 'Company Name', 'Location', 'Headquarters', 'Size', 'Industry', 'Sector', 'Lower Salary', 'Upper Salary', 'Avg Salary(K)', 'Job Location'].forEach(header => {
+                var th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            var tbody = document.createElement('tbody');
+
+            jobs.forEach(job => {
+                var row = document.createElement('tr');
+                ['title', 'company', 'location', 'headquarters', 'size', 'industry', 'sector', 'lower_salary', 'upper_salary', 'avg_salary_k', 'job_location'].forEach(key => {
+                    var td = document.createElement('td');
+                    td.textContent = job[key];
+                    row.appendChild(td);
+                });
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            return table;
+        }
+        function findJobs() {
+            var occupation = document.getElementById('Occupation').value;
+            var salary = document.getElementById('salary').value;
+
+            // Fetch and parse the CSV data
+            Papa.parse('data_w_slary.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    // This will be an array of objects, where each object represents a row of the CSV.
+                    var allJobs = results.data;
+
+                    // Filter the jobs based on the selected occupation and salary
+                    var filteredJobs = allJobs.filter(function(job) {
+                        return job['Occupation'] === occupation && job['Avg Salary(K)'] >= salary;
+                    });
+
+                    var resultsContainer = document.getElementById('results-container');
+                    resultsContainer.innerHTML = "";  // Clear the results container.
+
+                    // Create a table of the matching jobs and add it to the results container
+                    var table = createTable(filteredJobs);
+                    resultsContainer.appendChild(table);
+                }
+            });
+        }
+
+
+        // Call updateSliderValue when the page is loaded.
+        window.onload = function() {
+            updateSliderValue();
+        }
+
+        $("#submit-button").click(function(){
+            var occupation = $("#Occupation").val();
+            var salary = $("#salary").val();
+            findJobs(occupation, salary);
+        });
+
+
+        $(document).ready(function() {
+            $(window).on('scroll', function() {
+                $('.page').each(function() {
+                    if($(window).scrollTop() >= $(this).offset().top) {
+                        var id = $(this).attr('id');
+                        $('#scroll-nav a').removeClass('active');
+                        $('#scroll-nav a[href="#'+ id +'"]').addClass('active');
+                    }
+                });
+            });
+    
+            $('#scroll-nav a').on('click', function(event) {
+                event.preventDefault();
+    
+                var target = this.getAttribute('href');
+    
+                $('html, body').animate({
+                    scrollTop: $(target).offset().top
+                }, 500); // The number here represents the speed of the scrolling animation in milliseconds (500 ms = 0.5 seconds)
+            });
+        });
+    </script>
+        
+</body>
+</html>
+    
