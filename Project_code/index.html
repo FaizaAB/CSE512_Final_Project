@@ -54,6 +54,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
 
 </head>
 <body>
@@ -107,33 +109,80 @@
                     <option value="Other Scientist">Other Scientist</option>
                     <option value="Other">Other</option>
                 </select>
-    
-                <label for="salary">Salary:</label>
-                <input id="salary" type="range" min="0" max="120" step="0.5" oninput="updateSliderValue()">
-                <p id="slider-value"></p>                
+              
                 <button id="submit-button" type="button" onclick="findJobs()">Find Jobs</button>
             </form>
         </div>
         
         <div id="results-container">
-                <!-- This is where you will display the results returned from the server -->
+            <table id="jobsTable"></table>
         </div>
+        
+        
     
     </div>
     
+    
     <script>
-        function updateSliderValue() {
-            var slider = document.getElementById('salary');
-            var output = document.getElementById('slider-value');
-            output.innerHTML = "Selected Average Yearly Salary: $" + parseFloat(slider.value).toFixed(1) + "K";
-        }
+        d3.csv("modified_cleaned_data_2021.csv").then(function(data) {
+            console.log("Raw CSV data:", data);
+            
+            var allJobs = data.map(function(d) {
+                return {
+                    'Occupation': d.Occupation,
+                    'Avg Salary(K)': parseFloat(d['Avg Salary(K)'])
+                };
+            });
+
+            console.log("Mapped jobs data:", allJobs);
+
+            var filteredJobs = allJobs.filter(function(job) {
+                return job['Occupation'] === occupation && job['Avg Salary(K)'] >= salary;
+            });
+
+            console.log("Filtered jobs data:", filteredJobs);
+
+            var columns = ["Occupation", "Avg Salary(K)"];
+
+            var table = d3.select("#jobsTable");
+            table.selectAll("thead").remove();
+            table.selectAll("tbody").remove();
+
+            var thead = table.append("thead");
+            var tbody = table.append("tbody");
+
+            thead.append("tr")
+                .selectAll("th")
+                .data(columns)
+                .enter()
+                .append("th")
+                .text(function(column) { return column; });
+
+            var rows = tbody.selectAll("tr")
+                .data(filteredJobs)
+                .enter()
+                .append("tr");
+
+            var cells = rows.selectAll("td")
+                .data(function(row) {
+                    return columns.map(function(column) {
+                        return {column: column, value: row[column]};
+                    });
+                })
+                .enter()
+                .append("td")
+                .text(function(d) { return d.value; });
+        });
+
+
 
         function createTable(jobs) {
             var table = document.createElement('table');
+            table.id = "jobsTable";
             var thead = document.createElement('thead');
             var headerRow = document.createElement('tr');
 
-            ['Job Title', 'Company Name', 'Location', 'Headquarters', 'Size', 'Industry', 'Sector', 'Lower Salary', 'Upper Salary', 'Avg Salary(K)', 'Job Location'].forEach(header => {
+            ['Occupation', 'Avg Salary(K)'].forEach(header => {
                 var th = document.createElement('th');
                 th.textContent = header;
                 headerRow.appendChild(th);
@@ -146,10 +195,10 @@
 
             jobs.forEach(job => {
                 var row = document.createElement('tr');
-                ['title', 'company', 'location', 'headquarters', 'size', 'industry', 'sector', 'lower_salary', 'upper_salary', 'avg_salary_k', 'job_location'].forEach(key => {
-                    var td = document.createElement('td');
-                    td.textContent = job[key];
-                    row.appendChild(td);
+                ['Occupation', 'Avg Salary(K)'].forEach(key => {
+                var td = document.createElement('td');
+                td.textContent = key === 'Avg Salary(K)' ? job[key].toString() : job[key];
+                row.appendChild(td);
                 });
                 tbody.appendChild(row);
             });
@@ -157,32 +206,58 @@
             table.appendChild(tbody);
             return table;
         }
+
+
         function findJobs() {
             var occupation = document.getElementById('Occupation').value;
-            var salary = document.getElementById('salary').value;
 
-            // Fetch and parse the CSV data
-            Papa.parse('data_w_slary.csv', {
+            Papa.parse('modified_cleaned_data_2021.csv', {
                 download: true,
                 header: true,
                 complete: function(results) {
-                    // This will be an array of objects, where each object represents a row of the CSV.
                     var allJobs = results.data;
 
-                    // Filter the jobs based on the selected occupation and salary
                     var filteredJobs = allJobs.filter(function(job) {
-                        return job['Occupation'] === occupation && job['Avg Salary(K)'] >= salary;
+                        return job['Occupation'] === occupation;
                     });
 
-                    var resultsContainer = document.getElementById('results-container');
-                    resultsContainer.innerHTML = "";  // Clear the results container.
+                    var columns = ['Job Title', 'Salary Estimate', 'Job Description', 'Rating', 'Company Name', 'Location', 'Headquarters', 'Size', 'Industry', 'Sector', 'Lower Salary', 'Upper Salary', 'Avg Salary(K)', 'Job Location', 'Occupation', 'RequiredSkills'];
 
-                    // Create a table of the matching jobs and add it to the results container
-                    var table = createTable(filteredJobs);
+                    var table = document.createElement('table');
+                    table.id = "jobsTable";
+                    var thead = document.createElement('thead');
+                    var headerRow = document.createElement('tr');
+
+                    columns.forEach(header => {
+                        var th = document.createElement('th');
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+
+                    var tbody = document.createElement('tbody');
+
+                    filteredJobs.forEach(job => {
+                        var row = document.createElement('tr');
+                        columns.forEach(key => {
+                            var td = document.createElement('td');
+                            td.textContent = job[key];
+                            row.appendChild(td);
+                        });
+                        tbody.appendChild(row);
+                    });
+
+                    table.appendChild(tbody);
+
+                    var resultsContainer = document.getElementById('results-container');
+                    resultsContainer.innerHTML = "";
                     resultsContainer.appendChild(table);
                 }
             });
         }
+
 
 
         // Call updateSliderValue when the page is loaded.
@@ -190,36 +265,29 @@
             updateSliderValue();
         }
 
-        $("#submit-button").click(function(){
-            var occupation = $("#Occupation").val();
-            var salary = $("#salary").val();
-            findJobs(occupation, salary);
-        });
-
-
         $(document).ready(function() {
             $(window).on('scroll', function() {
-                $('.page').each(function() {
-                    if($(window).scrollTop() >= $(this).offset().top) {
-                        var id = $(this).attr('id');
-                        $('#scroll-nav a').removeClass('active');
-                        $('#scroll-nav a[href="#'+ id +'"]').addClass('active');
-                    }
-                });
-            });
-    
-            $('#scroll-nav a').on('click', function(event) {
-                event.preventDefault();
-    
-                var target = this.getAttribute('href');
-    
-                $('html, body').animate({
-                    scrollTop: $(target).offset().top
-                }, 500); // The number here represents the speed of the scrolling animation in milliseconds (500 ms = 0.5 seconds)
+            $('.page').each(function() {
+                if($(window).scrollTop() >= $(this).offset().top) {
+                    var id = $(this).attr('id');
+                    $('#scroll-nav a').removeClass('active');
+                    $('#scroll-nav a[href="#'+ id +'"]').addClass('active');
+                }
             });
         });
+
+        $('#scroll-nav a').on('click', function(event) {
+            event.preventDefault();
+
+            var target = this.getAttribute('href');
+
+            $('html, body').animate({
+                scrollTop: $(target).offset().top
+            }, 500); // The number here represents the speed of the scrolling animation in milliseconds (500 ms = 0.5 seconds)
+        });
+    });
     </script>
-        
+
+
 </body>
 </html>
-    
