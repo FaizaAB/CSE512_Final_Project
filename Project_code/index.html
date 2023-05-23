@@ -21,6 +21,38 @@
             /* Below line for separate background color for each page - optional */
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
+        .page#page7 .upper-half {
+            height: 50%;
+            display: flex;
+        }
+
+        .page#page7 .lower-half {
+            height: 50%;
+        }
+
+        .page#page7 .left-section,
+        .page#page7 .right-section {
+            width: 50%;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .page#page7 .right-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page#page7 .top-section {
+            flex: 1;
+        }
+
+        .page#page7 .bottom-section {
+            flex: 1;
+            overflow-y: auto;
+            padding-top: 20px;
+        }
+
 
         h1 {
             font-size: 5em;
@@ -54,7 +86,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
 
 
 </head>
@@ -93,33 +125,36 @@
         <!-- Add your visualization here -->
     </div>
     <div class="page" id="page7">
-        <h1>Job Finder</h1>
-        <div id="form-container">
-            <form>
-                <label for="Occupation">Occupation:</label>
-                <select id="Occupation">
-                    <option value="Data Engineer">Data Engineer</option>
-                    <option value="Data Scientist">Data Scientist</option>
-                    <option value="Data Analitics">Data Analitics</option>
-                    <option value="Analyst">Analyst</option>
-                    <option value="Data Modeler">Data Modeler</option>
-                    <option value="Project Manager">Project Manager</option>
-                    <option value="Machine Learning Engineer">Machine Learning Engineer</option>
-                    <option value="Director">Director</option>
-                    <option value="Other Scientist">Other Scientist</option>
-                    <option value="Other">Other</option>
-                </select>
-              
-                <button id="submit-button" type="button" onclick="findJobs()">Find Jobs</button>
-            </form>
+        <div class="upper-half">
+            <div class="left-section">
+                <h1>Job Finder</h1>
+                <h2>About the Tool</h2>
+                <p>Explanation of the tool and its functionality goes here.</p>
+            </div>
+            <div class="right-section">
+                <div id="form-container">
+                    <form>
+                        <label for="Occupation">Occupation:</label>
+                        <select id="Occupation">
+                            <option value="Data_Engineer">Data Engineer</option>
+                            <option value="Data_Scientist">Data Scientist</option>
+                            <option value="Data_Analyst">Analyst</option>
+                            <option value="Data_Modeler">Data Modeler</option>
+                            <option value="Project_Manager">Project Manager</option>
+                            <option value="MachineLearning_Engineer">Machine Learning Engineer</option>
+                            <option value="Director">Director</option>
+                            <option value="Other_Scientist">Other Scientist</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <button id="submit-button" type="button" onclick="findJobs()">Find Jobs</button>
+                    </form>
+                </div>
+            </div>
+        <div class="lower-half">
+            <div id="results-container">
+                <table id="jobsTable"></table>
+            </div>
         </div>
-        
-        <div id="results-container">
-            <table id="jobsTable"></table>
-        </div>
-        
-        
-    
     </div>
     
     
@@ -206,8 +241,6 @@
             table.appendChild(tbody);
             return table;
         }
-
-
         function findJobs() {
             var occupation = document.getElementById('Occupation').value;
 
@@ -221,7 +254,7 @@
                         return job['Occupation'] === occupation;
                     });
 
-                    var columns = ['Job Title', 'Salary Estimate', 'Job Description', 'Rating', 'Company Name', 'Location', 'Headquarters', 'Size', 'Industry', 'Sector', 'Lower Salary', 'Upper Salary', 'Avg Salary(K)', 'Job Location', 'Occupation', 'RequiredSkills'];
+                    var columns = ['Job Title',  'Company Name', 'Location', 'Headquarters', 'Size', 'Industry', 'Sector',  'Job Location','Avg Salary(K)',  'RequiredSkills'];
 
                     var table = document.createElement('table');
                     table.id = "jobsTable";
