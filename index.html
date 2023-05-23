@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scrolling Visualization Project</title>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        .page {
+            min-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Below line for separate background color for each page - optional */
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .page#page7 .upper-half {
+            height: 50%;
+            display: flex;
+        }
+
+        .page#page7 .lower-half {
+            height: 50%;
+        }
+
+        .page#page7 .left-section,
+        .page#page7 .right-section {
+            width: 50%;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .page#page7 .right-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page#page7 .top-section {
+            flex: 1;
+        }
+
+        .page#page7 .bottom-section {
+            flex: 1;
+            overflow-y: auto;
+            padding-top: 20px;
+        }
+
+
+        h1 {
+            font-size: 5em;
+        }
+      
+        #scroll-nav {
+            position: fixed;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #scroll-nav a {
+            display: block;
+            height: 15px;
+            width: 15px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin: 10px 0;
+            text-decoration: none;  /* to remove underline */
+        }
+
+        #scroll-nav a.active {
+            background-color: #333;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
+
+</head>
+<body>
+    <div id="scroll-nav">
+        <a href="#page1"></a>
+        <a href="#page2"></a>
+        <a href="#page3"></a>
+        <a href="#page4"></a>
+        <a href="#page5"></a>
+        <a href="#page6"></a>
+        <a href="#page7"></a>
+    </div>
+    <div class="page" id="page1">
+        <h1>Page 1</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page2">
+        <h1>Page 2</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page3">
+        <h1>Page 3</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page4">
+        <h1>Page 4</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page5">
+        <h1>Page 5</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page6">
+        <h1>Page 6</h1>
+        <!-- Add your visualization here -->
+    </div>
+    <div class="page" id="page7">
+        <div class="upper-half">
+            <div class="left-section">
+                <h1>Job Finder</h1>
+                <h2>About the Tool</h2>
+                <p>Explanation of the tool and its functionality goes here.</p>
+            </div>
+            <div class="right-section">
+                <div id="form-container">
+                    <form>
+                        <label for="Occupation">Occupation:</label>
+                        <select id="Occupation">
+                            <option value="Data_Engineer">Data Engineer</option>
+                            <option value="Data_Scientist">Data Scientist</option>
+                            <option value="Data_Analyst">Analyst</option>
+                            <option value="Data_Modeler">Data Modeler</option>
+                            <option value="Project_Manager">Project Manager</option>
+                            <option value="MachineLearning_Engineer">Machine Learning Engineer</option>
+                            <option value="Director">Director</option>
+                            <option value="Other_Scientist">Other Scientist</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <button id="submit-button" type="button" onclick="findJobs()">Find Jobs</button>
+                    </form>
+                </div>
+            </div>
+        <div class="lower-half">
+            <div id="results-container">
+                <table id="jobsTable"></table>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script>
+        d3.csv("modified_cleaned_data_2021.csv").then(function(data) {
+            console.log("Raw CSV data:", data);
+            
+            var allJobs = data.map(function(d) {
+                return {
+                    'Occupation': d.Occupation,
+                    'Avg Salary(K)': parseFloat(d['Avg Salary(K)'])
+                };
+            });
+
+            console.log("Mapped jobs data:", allJobs);
+
+            var filteredJobs = allJobs.filter(function(job) {
+                return job['Occupation'] === occupation && job['Avg Salary(K)'] >= salary;
+            });
+
+            console.log("Filtered jobs data:", filteredJobs);
+
+            var columns = ["Occupation", "Avg Salary(K)"];
+
+            var table = d3.select("#jobsTable");
+            table.selectAll("thead").remove();
+            table.selectAll("tbody").remove();
+
+            var thead = table.append("thead");
+            var tbody = table.append("tbody");
+
+            thead.append("tr")
+                .selectAll("th")
+                .data(columns)
+                .enter()
+                .append("th")
+                .text(function(column) { return column; });
+
+            var rows = tbody.selectAll("tr")
+                .data(filteredJobs)
+                .enter()
+                .append("tr");
+
+            var cells = rows.selectAll("td")
+                .data(function(row) {
+                    return columns.map(function(column) {
+                        return {column: column, value: row[column]};
+                    });
+                })
+                .enter()
+                .append("td")
+                .text(function(d) { return d.value; });
+        });
+
+
+
+        function createTable(jobs) {
+            var table = document.createElement('table');
+            table.id = "jobsTable";
+            var thead = document.createElement('thead');
+            var headerRow = document.createElement('tr');
+
+            ['Occupation', 'Avg Salary(K)'].forEach(header => {
+                var th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            var tbody = document.createElement('tbody');
+
+            jobs.forEach(job => {
+                var row = document.createElement('tr');
+                ['Occupation', 'Avg Salary(K)'].forEach(key => {
+                var td = document.createElement('td');
+                td.textContent = key === 'Avg Salary(K)' ? job[key].toString() : job[key];
+                row.appendChild(td);
+                });
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            return table;
+        }
+        function findJobs() {
+            var occupation = document.getElementById('Occupation').value;
+
+            Papa.parse('modified_cleaned_data_2021.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    var allJobs = results.data;
+
+                    var filteredJobs = allJobs.filter(function(job) {
+                        return job['Occupation'] === occupation;
+                    });
+
+                    var columns = ['Job Title',  'Company Name', 'Location', 'Headquarters', 'Size', 'Industry', 'Sector',  'Job Location','Avg Salary(K)',  'RequiredSkills'];
+
+                    var table = document.createElement('table');
+                    table.id = "jobsTable";
+                    var thead = document.createElement('thead');
+                    var headerRow = document.createElement('tr');
+
+                    columns.forEach(header => {
+                        var th = document.createElement('th');
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+
+                    var tbody = document.createElement('tbody');
+
+                    filteredJobs.forEach(job => {
+                        var row = document.createElement('tr');
+                        columns.forEach(key => {
+                            var td = document.createElement('td');
+                            td.textContent = job[key];
+                            row.appendChild(td);
+                        });
+                        tbody.appendChild(row);
+                    });
+
+                    table.appendChild(tbody);
+
+                    var resultsContainer = document.getElementById('results-container');
+                    resultsContainer.innerHTML = "";
+                    resultsContainer.appendChild(table);
+                }
+            });
+        }
+
+
+
+        // Call updateSliderValue when the page is loaded.
+        window.onload = function() {
+            updateSliderValue();
+        }
+
+        $(document).ready(function() {
+            $(window).on('scroll', function() {
+            $('.page').each(function() {
+                if($(window).scrollTop() >= $(this).offset().top) {
+                    var id = $(this).attr('id');
+                    $('#scroll-nav a').removeClass('active');
+                    $('#scroll-nav a[href="#'+ id +'"]').addClass('active');
+                }
+            });
+        });
+
+        $('#scroll-nav a').on('click', function(event) {
+            event.preventDefault();
+
+            var target = this.getAttribute('href');
+
+            $('html, body').animate({
+                scrollTop: $(target).offset().top
+            }, 500); // The number here represents the speed of the scrolling animation in milliseconds (500 ms = 0.5 seconds)
+        });
+    });
+    </script>
+
+
+</body>
+</html>
