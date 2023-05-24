@@ -344,17 +344,25 @@
                     table.appendChild(thead);
 
                     var tbody = document.createElement('tbody');
-
-                    filteredJobs.forEach(job => {
-                        var row = document.createElement('tr');
-                        columns.forEach(key => {
-                            var td = document.createElement('td');
-                            td.textContent = job[key];
-                            row.appendChild(td);
+                    if (filteredJobs.length === 0) {
+                        var noResultsRow = document.createElement('tr');
+                        var noResultsCell = document.createElement('td');
+                        noResultsCell.textContent = "No results found for the selected state.";
+                        noResultsCell.colSpan = columns.length;
+                        noResultsCell.classList.add('no-results');
+                        noResultsRow.appendChild(noResultsCell);
+                        tbody.appendChild(noResultsRow);
+                    } else {
+                        filteredJobs.forEach(job => {
+                            var row = document.createElement('tr');
+                            columns.forEach(key => {
+                                var td = document.createElement('td');
+                                td.textContent = job[key];
+                                row.appendChild(td);
+                            });
+                            tbody.appendChild(row);
                         });
-                        tbody.appendChild(row);
-                    });
-
+                    }
                     table.appendChild(tbody);
 
                     var resultsContainer = document.getElementById('results-container');
