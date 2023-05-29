@@ -25,21 +25,6 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
 
-        .page#page1 {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            padding-top: 20px;
-            /* Add some padding to not stick the title on the very top */
-            padding-left: 50px;
-            /* Add some padding to not stick the title on the very top */
-            padding-right: 50px;
-            /* Add some padding to not stick the title on the very top */
-            padding-bottom: 20px;
-            /* Add some padding to not stick the title on the very top */
-
-        }
-
         .page#page6 {
             display: flex;
             flex-direction: column;
@@ -55,23 +40,28 @@
             overflow: auto;
 
         }
+        .row{ 
+            height: inherit;
+            display: flex;
+
+        }
 
         .upper {
-            height: 33vh;
+            height: 50vh;
             display: flex;
         }
 
         .lower {
-            height: 67vh;
-            overflow: auto;
+            height: 50vh;
+            display: flex;
         }
 
         .left {
-            width: 50%;
+            width: 50hv;
         }
 
         .right {
-            width: 50%;
+            width: 50hv;
         }
 
 
@@ -121,156 +111,59 @@
 </head>
 
 <body>
-    <div id="scroll-nav">
-        <a href="#page1"></a>
-        <a href="#page2"></a>
-        <a href="#page3"></a>
-        <a href="#page4"></a>
-        <a href="#page5"></a>
-        <a href="#page6"></a>
-    </div>
-    <div class="page" id="page1">
+    <div class="upper">
         <h1>Data Science Insight</h1>
         <div class="content">
             <p> <strong> Welcome </strong> to our data-centric platform, designed to empower professionals and
                 enthusiasts in the field of data science</p>
             <p>Team Member: Faiza Abdilahi, Chanwoo Kim, Sophie Degn.</p>
-            <p>
-                We aim is to provide you with comprehensive
-                insights into the landscape of data jobs across various
-                states, industries, and roles. You'll find invaluable information on <strong> job availability, salary
-                    ranges, high-demand titles, and required skills</strong>, all meticulously compiled and analyzed
-            </p>
-            <p>We don't just stop at providing insights. Our platform also hosts an interactive tool tailored to your
-                specific interests. With this, you can input your desired occupation and state to receive a customized
-                report detailing job positions, average salaries, and requisite skills in your selected field. We've
-                combined data and technology to give you a clear and actionable roadmap for your career journey. Welcome
-                to your data-driven future</p>
-            <h2>What You Will Find</h2>
-            <ul>
-                <li>Page 2: Jobs salaries between states </li>
-                <li>Page 3: Job numbers in different states</li>
-                <li>Page 4: Skilles required in data science jobs </li>
-                <li>Page 5: Job positions in different industries </>
-                <li>Page 6: An interactive tool to jind jobs </li>
-            </ul>
-            <h3>Next steps and questions regarding this project</h3>
-            <ul>
-                <li>Things not finished:(1) We have created the separate page 4 and 5, but right now we are having
-                    difficulty integrating them into this web. (2) Change all visualizations to be more beautiful. (3)
-                    Update the job find tool to be more powerful for users </li>
-                <li>Questions:Is there a better way for us to integrate all parts together instead of putting them in
-                    one webpage and scroll up and down? Do you have any suggestions? </li>
-            </ul>
         </div>
     </div>
-    </div>
-    <div class="page" id="page2">
-        <h1 id="map_title">
-            Page 2
-        </h1>
-        <div id="container_map">
-            <div id="plot_map"></div>
-            <div id="buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options1" id="option1" autocomplete="off" checked
-                        onclick="updateMap(data_load, 'data scientist', '')"> Data Scientist
-                </label>
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options1" id="option2" autocomplete="off"
-                        onclick="updateMap(data_load, 'data engineer', '')"> Data Engineer
-                </label>
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options1" id="option3" autocomplete="off"
-                        onclick="updateMap(data_load, 'analyst', '')">
-                    Analyst
-                    Engineer
-                </label>
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options1" id="option1" autocomplete="off"
-                        onclick="updateMap(data_load, 'other', '')">
-                    Other
-                    Scientist
-                </label>
+   
+    <div class="row">
+        <div class ="upper">
+            <div class="left">
+                <h1 id="map_title">
+                </h1>
+                <div id="container_map">
+                    <div id="plot_map"></div>
+                    <div id="buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
+                    </div>
+                </div>
+            </div> 
+            <div class="right">
+                <h1 id="bar_title">
+                </h1>
+                <div id="container_bar">
+                    <div id="plot_bar">
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+    <div class = "row">
+        <div class="lower">
+            <div class="left">
+                <h1>Skills Required in Data Science Positions</h1>
+                <div id="description">
+                    <p>In the ever-expanding landscape of data science, a diverse range of skills has emerged as the bedrock of
+                        success
+                        for professionals in this field. Data science is a multidisciplinary domain that encompasses the
+                        extraction,
+                        analysis, and interpretation of valuable insights from vast amounts of data. As organizations strive to
+                        leverage
+                        data-driven strategies, understanding the essential skills required in data science positions has become
+                        paramount.</p>
+                </div>
+                <div id="word-cloud"></div>
+            </div>
+            <div class="right">
+                <h1>Data Science Positions in Different Sectors & Industries</h1>
+                <div id="chart"></div>
+            </div>
+        </div>
+    </div>
 
-            <div id="buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options2" id="option4" autocomplete="off" checked
-                        onclick="updateMap(data_load, '', 'sr')"> Junior
-                </label>
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options2" id="option5" autocomplete="off"
-                        onclick="updateMap(data_load, '', 'jr')">
-                    Senior
-                </label>
-            </div>
-        </div>
-        <!-- Add your visualization here -->
-    </div>
-    <div class="page" id="page3">
-        <h1 id="bar_title">
-            Page 3
-        </h1>
-        <div id="container_bar">
-            <div id="plot_bar"></div>
-            <div id="buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options1" id="option1" autocomplete="off" checked
-                        onclick="updateBar(data_load, 'data scientist', '')"> Data Scientist
-                </label>
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options1" id="option2" autocomplete="off"
-                        onclick="updateBar(data_load, 'data engineer', '')"> Data Engineer
-                </label>
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options1" id="option3" autocomplete="off"
-                        onclick="updateBar(data_load, 'analyst', '')">
-                    Analyst
-                    Engineer
-                </label>
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options1" id="option1" autocomplete="off"
-                        onclick="updateBar(data_load, 'other', '')">
-                    Other
-                    Scientist
-                </label>
-            </div>
-
-            <div id="buttons" class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options2" id="option4" autocomplete="off" checked
-                        onclick="updateBar(data_load, '', 'sr')"> Junior
-                </label>
-                <label class="btn btn-secondary active">
-                    <input type="radio" name="options2" id="option5" autocomplete="off"
-                        onclick="updateBar(data_load, '', 'jr')">
-                    Senior
-                </label>
-            </div>
-        </div>
-        <!-- Add your visualization here -->
-    </div>
-    <div class="page" id="page4">
-        <h1>Skills Required in Data Science Positions</h1>
-        <!-- Add your visualization here -->
-        <div id="description">
-            <p>In the ever-expanding landscape of data science, a diverse range of skills has emerged as the bedrock of
-                success
-                for professionals in this field. Data science is a multidisciplinary domain that encompasses the
-                extraction,
-                analysis, and interpretation of valuable insights from vast amounts of data. As organizations strive to
-                leverage
-                data-driven strategies, understanding the essential skills required in data science positions has become
-                paramount.</p>
-        </div>
-        <div id="word-cloud"></div>
-    </div>
-    <div class="page" id="page5">
-        <h1>Data Science Positions in Different Sectors & Industries</h1>
-        <div id="chart"></div>
-        <!-- Add your visualization here -->
-    </div>
     <div class="page" id="page6">
         <div class="upper">
             <div class="left">
@@ -368,7 +261,7 @@
 
 
         <script>
-            d3.csv("modified_cleaned_data_2021.csv").then(function (data) {
+            d3.csv("faiza/modified_cleaned_data_2021.csv").then(function (data) {
                 console.log("Raw CSV data:", data);
 
                 var allJobs = data.map(function (d) {
@@ -456,7 +349,7 @@
                 var occupation = document.getElementById('Occupation').value;
                 var jobLocation = document.getElementById("JobLocation").value;
 
-                Papa.parse('modified_cleaned_data_2021.csv', {
+                Papa.parse('faiza/modified_cleaned_data_2021.csv', {
                     download: true,
                     header: true,
                     complete: function (results) {
@@ -543,7 +436,7 @@
 
 
 
-            var margin = { top: 20, right: 20, bottom: 100, left: 70 },
+            var margin = { top: 20, right: 20, bottom: 20, left: 20 },
                 width = 1000 - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
 
@@ -579,7 +472,7 @@
                 .style("z-index", "10")
 
             var data_load = []
-            d3.csv('salary_data.csv').then(function (data) {
+            d3.csv('chanwoo/salary_data.csv').then(function (data) {
                 // add each row to the array
                 data.forEach(function (d) {
                     d.jobcount = parseInt(d.jobcount)
@@ -813,8 +706,8 @@
             }
             // Load the data from the JSON file
             d3.json('sophie/industry_data.json').then(data => {
-                const width = 1000;
-                const height = 700;
+                const width = 500;
+                const height = 350;
 
                 // Create the SVG container
                 const svg = d3.select('#chart')
@@ -901,7 +794,7 @@
                     .range(["#e0f3db", "#0868ac"]); // Adjust the range to desired darker colors
 
                 var layout = d3.layout.cloud()
-                    .size([800, 500])
+                    .size([400, 400])
                     .words(words)
                     .padding(3)
                     .rotate(function () { return ~~(Math.random() * 2) * 90; })
