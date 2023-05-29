@@ -368,7 +368,7 @@
 
 
         <script>
-            d3.csv("faiza/modified_cleaned_data_2021.csv").then(function (data) {
+            d3.csv("modified_cleaned_data_2021.csv").then(function (data) {
                 console.log("Raw CSV data:", data);
 
                 var allJobs = data.map(function (d) {
@@ -456,7 +456,7 @@
                 var occupation = document.getElementById('Occupation').value;
                 var jobLocation = document.getElementById("JobLocation").value;
 
-                Papa.parse('faiza/modified_cleaned_data_2021.csv', {
+                Papa.parse('modified_cleaned_data_2021.csv', {
                     download: true,
                     header: true,
                     complete: function (results) {
@@ -579,7 +579,7 @@
                 .style("z-index", "10")
 
             var data_load = []
-            d3.csv('chanwoo/salary_data.csv').then(function (data) {
+            d3.csv('salary_data.csv').then(function (data) {
                 // add each row to the array
                 data.forEach(function (d) {
                     d.jobcount = parseInt(d.jobcount)
