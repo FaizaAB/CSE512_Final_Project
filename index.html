@@ -261,7 +261,7 @@
 
 
         <script>
-            d3.csv("faiza/modified_cleaned_data_2021.csv").then(function (data) {
+            d3.csv("modified_cleaned_data_2021.csv").then(function (data) {
                 console.log("Raw CSV data:", data);
 
                 var allJobs = data.map(function (d) {
@@ -349,7 +349,7 @@
                 var occupation = document.getElementById('Occupation').value;
                 var jobLocation = document.getElementById("JobLocation").value;
 
-                Papa.parse('faiza/modified_cleaned_data_2021.csv', {
+                Papa.parse('modified_cleaned_data_2021.csv', {
                     download: true,
                     header: true,
                     complete: function (results) {
@@ -472,7 +472,7 @@
                 .style("z-index", "10")
 
             var data_load = []
-            d3.csv('chanwoo/salary_data.csv').then(function (data) {
+            d3.csv('salary_data.csv').then(function (data) {
                 // add each row to the array
                 data.forEach(function (d) {
                     d.jobcount = parseInt(d.jobcount)
@@ -633,7 +633,7 @@
 
                 })
                 console.log(dataSelect)
-                d3.json("chanwoo/us-states.json").then(function (geodata) {
+                d3.json("us-states.json").then(function (geodata) {
                     // Filter data
                     geodata.features = geodata.features//.filter(d => d.properties.name == "France")
 
@@ -705,7 +705,7 @@
                 })
             }
             // Load the data from the JSON file
-            d3.json('sophie/industry_data.json').then(data => {
+            d3.json('industry_data.json').then(data => {
                 const width = 500;
                 const height = 350;
 
@@ -784,7 +784,7 @@
                 });
             });
 
-            d3.json("sophie/skill_data.json").then(function (data) {
+            d3.json("skill_data.json").then(function (data) {
                 var words = data.map(function (d) {
                     return { text: d.skill, count: d.count };
                 });
